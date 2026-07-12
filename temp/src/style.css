@@ -1,0 +1,258 @@
+:root {
+  --ink: #102038;
+  --muted: #4f6279;
+  --surface: #f6f8fb;
+  --card: #ffffff;
+  --line: #d7e0ea;
+  --primary: #145a95;
+  --primary-2: #0f8b8d;
+  --good: #0c8a57;
+  --bad: #c0392b;
+  --shadow: 0 16px 30px rgba(16, 32, 56, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 8% 4%, #d9ecff 0, #f6f8fb 48%),
+    linear-gradient(160deg, #f8fbff 0%, #eef5fa 100%);
+  min-height: 100svh;
+}
+
+#app {
+  width: min(1080px, 100% - 2rem);
+  margin: 1.2rem auto;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.ambient-bg {
+  position: absolute;
+  inset: -140px auto auto -120px;
+  width: 330px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 90, 149, 0.25), transparent 64%);
+  pointer-events: none;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.brand {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.ghost-btn {
+  background: transparent;
+  color: var(--primary);
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(20, 90, 149, 0.28);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  line-height: 1.05;
+}
+
+.subtitle {
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  max-width: 38ch;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 0.7rem 1.1rem;
+  font-weight: 700;
+}
+
+.primary-btn {
+  color: #fff;
+  background: linear-gradient(110deg, var(--primary), var(--primary-2));
+}
+
+.secondary-btn {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.signal-card {
+  background: linear-gradient(165deg, #f9fcff 0%, #f0f7ff 100%);
+  border: 1px solid #dbe7f5;
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.signal-title,
+.signal-note {
+  margin: 0;
+}
+
+.signal-title {
+  font-weight: 700;
+}
+
+.signal-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.signal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0.9rem 0;
+}
+
+.signal-grid article {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0e8f3;
+  padding: 0.65rem;
+}
+
+.signal-grid p,
+.signal-grid strong {
+  margin: 0;
+}
+
+.signal-grid p {
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+
+.watchlist {
+  margin-top: 1.2rem;
+}
+
+h2,
+h3 {
+  margin: 0;
+}
+
+.watchlist-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.stock {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stock p {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.stock strong {
+  font-size: 1.02rem;
+}
+
+.stock.up strong {
+  color: var(--good);
+}
+
+.stock.down strong {
+  color: var(--bad);
+}
+
+.insights {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.insights article {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.8rem;
+}
+
+.insights p,
+.footer p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}
+
+.footer {
+  margin-top: 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 820px) {
+  #app {
+    padding: 1.35rem;
+  }
+
+  .hero {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.1rem;
+    align-items: stretch;
+  }
+
+  .watchlist-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .insights {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
