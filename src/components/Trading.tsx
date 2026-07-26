@@ -75,7 +75,7 @@ export default function Trading({ onTrade }: Props) {
     }
   }
 
-  const estimatedTotal = quote ? parseFloat(quantity || '0') * quote.price : 0;
+  const estimatedTotal = quote ? parseFloat(quantity || '0') * quote.price : 0; // cents
 
   return (
     <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr' }}>
@@ -99,9 +99,9 @@ export default function Trading({ onTrade }: Props) {
         {error && <p className="error-msg">{error}</p>}
         {result && (
           <p className="success-msg">
-            {result.message}: {result.quantity} × {result.ticker} @ {fmt(result.price)}
+            {result.message}: {result.quantity} × {result.ticker} @ {fmt(result.price / 100)}
             <br />
-            New cash balance: <strong>{fmt(result.new_balance)}</strong>
+            New cash balance: <strong>{fmt(result.new_balance / 100)}</strong>
           </p>
         )}
 
@@ -157,7 +157,7 @@ export default function Trading({ onTrade }: Props) {
               >
                 {allQuotes.map((q) => (
                   <option key={q.ticker} value={q.ticker}>
-                    {q.ticker} — {fmt(q.price)}
+                    {q.ticker} — {fmt(q.price / 100)}
                   </option>
                 ))}
               </select>
@@ -199,16 +199,16 @@ export default function Trading({ onTrade }: Props) {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700 }}>{quote.ticker}</span>
-                <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>{fmt(quote.price)}</span>
+                <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>{fmt(quote.price / 100)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--muted)', marginTop: '0.2rem' }}>
                 <span>
                   Change:{' '}
                   <span style={{ color: quote.change_amount >= 0 ? 'var(--good)' : 'var(--bad)' }}>
-                    {quote.change_amount >= 0 ? '+' : ''}{fmt(quote.change_amount)} ({quote.change_percent >= 0 ? '+' : ''}{quote.change_percent.toFixed(2)}%)
+                    {quote.change_amount >= 0 ? '+' : ''}{fmt(quote.change_amount / 100)} ({quote.change_percent >= 0 ? '+' : ''}{quote.change_percent.toFixed(2)}%)
                   </span>
                 </span>
-                <span>Est. {fmt(estimatedTotal)}</span>
+                <span>Est. {fmt(estimatedTotal / 100)}</span>
               </div>
             </div>
           )}
@@ -252,11 +252,11 @@ export default function Trading({ onTrade }: Props) {
                   onClick={() => setTicker(q.ticker)}
                 >
                   <td style={{ fontWeight: 700 }}>{q.ticker}</td>
-                  <td>{fmt(q.price)}</td>
+                  <td>{fmt(q.price / 100)}</td>
                   <td
                     style={{ color: q.change_amount >= 0 ? 'var(--good)' : 'var(--bad)' }}
                   >
-                    {q.change_amount >= 0 ? '+' : ''}{fmt(q.change_amount)}
+                    {q.change_amount >= 0 ? '+' : ''}{fmt(q.change_amount / 100)}
                   </td>
                   <td
                     style={{ color: q.change_percent >= 0 ? 'var(--good)' : 'var(--bad)' }}

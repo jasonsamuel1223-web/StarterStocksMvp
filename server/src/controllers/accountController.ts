@@ -67,7 +67,9 @@ export function getTransactions(req: AuthRequest, res: Response): void {
 
     const transactions = db
       .prepare(
-        'SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp DESC LIMIT ? OFFSET ?'
+        // Sort by timestamp DESC first; use id DESC as tiebreaker to guarantee
+        // deterministic ordering when multiple transactions share the same second.
+        'SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp DESC, id DESC LIMIT ? OFFSET ?'
       )
       .all(userId, limit, offset) as Transaction[];
 

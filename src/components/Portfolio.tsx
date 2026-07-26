@@ -46,11 +46,11 @@ export default function Portfolio({ refreshKey }: Props) {
       >
         <div className="stat-card">
           <p className="stat-label">Portfolio value</p>
-          <p className="stat-value">{fmt(data.portfolio_value)}</p>
+          <p className="stat-value">{fmt(data.portfolio_value / 100)}</p>
         </div>
         <div className="stat-card">
           <p className="stat-label">Cost basis</p>
-          <p className="stat-value">{fmt(data.cost_basis)}</p>
+          <p className="stat-value">{fmt(data.cost_basis / 100)}</p>
         </div>
         <div className="stat-card">
           <p className="stat-label">Unrealized P&amp;L</p>
@@ -58,7 +58,7 @@ export default function Portfolio({ refreshKey }: Props) {
             className="stat-value"
             style={{ color: data.unrealized_gain_loss >= 0 ? 'var(--good)' : 'var(--bad)' }}
           >
-            {fmt(data.unrealized_gain_loss)}
+            {fmt(data.unrealized_gain_loss / 100)}
           </p>
         </div>
         <div className="stat-card">
@@ -96,11 +96,11 @@ export default function Portfolio({ refreshKey }: Props) {
                 <tr key={h.ticker}>
                   <td style={{ fontWeight: 700 }}>{h.ticker}</td>
                   <td>{h.quantity}</td>
-                  <td>{fmt(h.average_cost)}</td>
-                  <td>{fmt(h.current_price)}</td>
-                  <td>{fmt(h.current_value)}</td>
+                  <td>{fmt(h.average_cost / 100)}</td>
+                  <td>{fmt(h.current_price / 100)}</td>
+                  <td>{fmt(h.current_value / 100)}</td>
                   <td style={{ color: h.gain_loss >= 0 ? 'var(--good)' : 'var(--bad)' }}>
-                    {fmt(h.gain_loss)}
+                    {fmt(h.gain_loss / 100)}
                   </td>
                   <td style={{ color: h.gain_loss_percent >= 0 ? 'var(--good)' : 'var(--bad)' }}>
                     {pct(h.gain_loss_percent)}

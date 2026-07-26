@@ -74,8 +74,8 @@ export default function Transactions({ refreshKey }: Props) {
                     </span>
                   </td>
                   <td>{tx.quantity}</td>
-                  <td>{fmt(tx.price)}</td>
-                  <td style={{ fontWeight: 600 }}>{fmt(tx.total_amount)}</td>
+                  <td>{fmt(tx.price / 100)}</td>
+                  <td style={{ fontWeight: 600 }}>{fmt(tx.total_amount / 100)}</td>
                 </tr>
               ))}
             </tbody>

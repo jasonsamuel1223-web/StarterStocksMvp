@@ -19,7 +19,7 @@ export default function Login({ onLogin }: Props) {
     setLoading(true);
     try {
       const res = await login(email, password);
-      saveTokens(res.token, res.refreshToken);
+      saveTokens(res.token);
       onLogin();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Login failed. Please try again.');

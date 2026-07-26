@@ -20,7 +20,7 @@ export default function Register({ onRegister }: Props) {
     setLoading(true);
     try {
       const res = await register(username, email, password);
-      saveTokens(res.token, res.refreshToken);
+      saveTokens(res.token);
       onRegister();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Registration failed. Please try again.');
