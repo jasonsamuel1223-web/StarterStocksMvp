@@ -69,20 +69,20 @@ export default function Dashboard({ onLogout }: Props) {
         >
           <div className="stat-card">
             <p className="stat-label">Total value</p>
-            <p className="stat-value">{fmt(summary.total_value)}</p>
+            <p className="stat-value">{fmt(summary.total_value / 100)}</p>
           </div>
           <div className="stat-card">
             <p className="stat-label">Cash</p>
-            <p className="stat-value">{fmt(summary.cash_balance)}</p>
+            <p className="stat-value">{fmt(summary.cash_balance / 100)}</p>
           </div>
           <div className="stat-card">
             <p className="stat-label">Portfolio</p>
-            <p className="stat-value">{fmt(summary.portfolio_value)}</p>
+            <p className="stat-value">{fmt(summary.portfolio_value / 100)}</p>
           </div>
           <div className="stat-card">
             <p className="stat-label">Total P&amp;L</p>
             <p className="stat-value" style={{ color: gainLossColor }}>
-              {fmt(summary.total_gain_loss)}
+              {fmt(summary.total_gain_loss / 100)}
             </p>
           </div>
           <div className="stat-card">

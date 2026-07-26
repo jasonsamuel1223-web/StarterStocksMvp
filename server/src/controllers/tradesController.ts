@@ -28,8 +28,9 @@ export function buyStock(req: AuthRequest, res: Response): void {
       return;
     }
 
+    // price and totalCost are integer cents
     const price = quote.price;
-    const totalCost = price * quantity;
+    const totalCost = Math.round(price * quantity);
 
     const account = db
       .prepare('SELECT * FROM accounts WHERE user_id = ?')
@@ -49,7 +50,7 @@ export function buyStock(req: AuthRequest, res: Response): void {
     }
 
     const executeTrade = db.transaction(() => {
-      // Deduct cash
+      // Deduct cash (cents)
       db.prepare('UPDATE accounts SET balance = balance - ? WHERE user_id = ?').run(
         totalCost,
         userId
@@ -62,8 +63,10 @@ export function buyStock(req: AuthRequest, res: Response): void {
 
       if (existing) {
         const newQty = existing.quantity + quantity;
-        const newAvgCost =
-          (existing.average_cost * existing.quantity + price * quantity) / newQty;
+        // Weighted average cost in cents, rounded to nearest cent
+        const newAvgCost = Math.round(
+          (existing.average_cost * existing.quantity + price * quantity) / newQty
+        );
         db.prepare(
           `UPDATE portfolio SET quantity = ?, average_cost = ?, updated_at = datetime('now')
            WHERE user_id = ? AND ticker = ?`
@@ -75,7 +78,7 @@ export function buyStock(req: AuthRequest, res: Response): void {
         ).run(userId, upperTicker, quantity, price);
       }
 
-      // Record transaction
+      // Record transaction (price and total_amount in cents)
       db.prepare(
         `INSERT INTO transactions (user_id, ticker, type, quantity, price, total_amount)
          VALUES (?, ?, 'buy', ?, ?, ?)`
@@ -149,11 +152,12 @@ export function sellStock(req: AuthRequest, res: Response): void {
       return;
     }
 
+    // price and totalProceeds are integer cents
     const price = quote.price;
-    const totalProceeds = price * quantity;
+    const totalProceeds = Math.round(price * quantity);
 
     const executeSell = db.transaction(() => {
-      // Add cash
+      // Add cash (cents)
       db.prepare('UPDATE accounts SET balance = balance + ? WHERE user_id = ?').run(
         totalProceeds,
         userId
@@ -173,7 +177,7 @@ export function sellStock(req: AuthRequest, res: Response): void {
         ).run(newQty, userId, upperTicker);
       }
 
-      // Record transaction
+      // Record transaction (price and total_amount in cents)
       db.prepare(
         `INSERT INTO transactions (user_id, ticker, type, quantity, price, total_amount)
          VALUES (?, ?, 'sell', ?, ?, ?)`

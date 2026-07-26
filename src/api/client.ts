@@ -7,11 +7,22 @@ export class ApiError extends Error {
   }
 }
 
+// In-memory access token (not persisted to localStorage)
+let _accessToken: string | null = null;
+
+export function setAccessToken(token: string | null): void {
+  _accessToken = token;
+}
+
+export function getAccessToken(): string | null {
+  return _accessToken;
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem('token');
+  const token = _accessToken;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -21,7 +32,12 @@ async function request<T>(
     headers['Authorization'] = 'Bearer ' + token;
   }
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+    // Always send cookies so the HttpOnly refreshToken cookie is included
+    credentials: 'include',
+  });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));

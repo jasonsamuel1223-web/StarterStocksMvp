@@ -5,6 +5,8 @@ import db from '../database';
 import { User } from '../models/types';
 
 const SALT_ROUNDS = 12;
+const REFRESH_COOKIE_NAME = 'refreshToken';
+const REFRESH_COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function generateTokens(userId: number, username: string) {
   const secret = process.env.JWT_SECRET!;
@@ -15,6 +17,25 @@ function generateTokens(userId: number, username: string) {
   const token = jwt.sign({ userId, username }, secret, { expiresIn });
   const refreshToken = jwt.sign({ userId, username }, refreshSecret, { expiresIn: refreshExpiresIn });
   return { token, refreshToken };
+}
+
+function setRefreshCookie(res: Response, refreshToken: string): void {
+  res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: REFRESH_COOKIE_MAX_AGE_MS,
+    path: '/',
+  });
+}
+
+function clearRefreshCookie(res: Response): void {
+  res.clearCookie(REFRESH_COOKIE_NAME, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+  });
 }
 
 export async function register(req: Request, res: Response): Promise<void> {
@@ -57,8 +78,9 @@ export async function register(req: Request, res: Response): Promise<void> {
     const insertUser = db.prepare(
       'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)'
     );
+    // Starting balance: 100000 cents = $1,000.00
     const insertAccount = db.prepare(
-      'INSERT INTO accounts (user_id, balance, starting_balance) VALUES (?, 1000.00, 1000.00)'
+      'INSERT INTO accounts (user_id, balance, starting_balance) VALUES (?, 100000, 100000)'
     );
 
     const createUserAndAccount = db.transaction(() => {
@@ -70,10 +92,11 @@ export async function register(req: Request, res: Response): Promise<void> {
     const userId = createUserAndAccount();
     const { token, refreshToken } = generateTokens(userId, username);
 
+    setRefreshCookie(res, refreshToken);
+
     res.status(201).json({
       message: 'Account created successfully',
       token,
-      refreshToken,
       user: { id: userId, username, email },
     });
   } catch (err) {
@@ -108,10 +131,11 @@ export async function login(req: Request, res: Response): Promise<void> {
 
     const { token, refreshToken } = generateTokens(user.id, user.username);
 
+    setRefreshCookie(res, refreshToken);
+
     res.json({
       message: 'Login successful',
       token,
-      refreshToken,
       user: { id: user.id, username: user.username, email: user.email },
     });
   } catch (err) {
@@ -121,15 +145,15 @@ export async function login(req: Request, res: Response): Promise<void> {
 }
 
 export function logout(_req: Request, res: Response): void {
-  // Stateless JWT — instruct client to discard tokens
+  clearRefreshCookie(res);
   res.json({ message: 'Logged out successfully' });
 }
 
 export function refresh(req: Request, res: Response): void {
   try {
-    const { refreshToken } = req.body as { refreshToken?: string };
+    const refreshToken = (req.cookies as Record<string, string | undefined>)[REFRESH_COOKIE_NAME];
     if (!refreshToken) {
-      res.status(400).json({ error: 'refreshToken is required' });
+      res.status(400).json({ error: 'No refresh token' });
       return;
     }
 
@@ -140,7 +164,8 @@ export function refresh(req: Request, res: Response): void {
     };
 
     const { token, refreshToken: newRefresh } = generateTokens(payload.userId, payload.username);
-    res.json({ token, refreshToken: newRefresh });
+    setRefreshCookie(res, newRefresh);
+    res.json({ token });
   } catch {
     res.status(401).json({ error: 'Invalid or expired refresh token' });
   }

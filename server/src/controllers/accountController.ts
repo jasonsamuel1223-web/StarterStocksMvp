@@ -67,7 +67,7 @@ export function getTransactions(req: AuthRequest, res: Response): void {
 
     const transactions = db
       .prepare(
-        'SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp DESC LIMIT ? OFFSET ?'
+        'SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp DESC, id DESC LIMIT ? OFFSET ?'
       )
       .all(userId, limit, offset) as Transaction[];
 

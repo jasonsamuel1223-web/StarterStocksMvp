@@ -1,8 +1,7 @@
-import { api } from './client';
+import { api, setAccessToken, getAccessToken } from './client';
 
 export interface LoginResponse {
   token: string;
-  refreshToken: string;
   user: { id: number; username: string; email: string };
   message: string;
 }
@@ -21,16 +20,28 @@ export function logout() {
   return api.post<{ message: string }>('/api/auth/logout', {});
 }
 
-export function saveTokens(token: string, refreshToken: string) {
-  localStorage.setItem('token', token);
-  localStorage.setItem('refreshToken', refreshToken);
+/** Store the access token in memory (never in localStorage). */
+export function saveTokens(token: string): void {
+  setAccessToken(token);
 }
 
-export function clearTokens() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
+/** Clear the in-memory access token.
+ *  The HttpOnly refresh cookie is cleared by the logout endpoint. */
+export function clearTokens(): void {
+  setAccessToken(null);
 }
 
-export function getStoredToken() {
-  return localStorage.getItem('token');
+export function getStoredToken(): string | null {
+  return getAccessToken();
+}
+
+/** Attempt to refresh the access token using the HttpOnly refresh cookie. */
+export async function refreshAccessToken(): Promise<string | null> {
+  try {
+    const res = await api.post<{ token: string }>('/api/auth/refresh', {});
+    setAccessToken(res.token);
+    return res.token;
+  } catch {
+    return null;
+  }
 }

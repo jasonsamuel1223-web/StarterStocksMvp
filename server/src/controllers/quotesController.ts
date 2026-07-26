@@ -3,9 +3,10 @@ import db from '../database';
 import { StockQuote } from '../models/types';
 
 // Simulate minor price drift so quotes don't feel static (up to ±0.2% per call)
+// Prices are stored as integer cents; drift result is also rounded to integer cents.
 function simulatePriceDrift(price: number): number {
   const drift = (Math.random() - 0.5) * 0.004; // random in [-0.002, +0.002] → ±0.2%
-  return Math.round(price * (1 + drift) * 100) / 100;
+  return Math.round(price * (1 + drift));
 }
 
 export function getQuote(req: Request, res: Response): void {

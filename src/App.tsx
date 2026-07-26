@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -13,13 +13,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // isLoggedIn is driven by the in-memory access token.
+  // No localStorage storage event listener needed.
   const [isLoggedIn, setIsLoggedIn] = useState(!!getStoredToken());
-
-  useEffect(() => {
-    const handleStorage = () => setIsLoggedIn(!!getStoredToken());
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
 
   return (
     <Routes>
