@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { initializeDatabase } from './database';
+import { authLimiter, apiLimiter } from './middleware/rateLimiter';
 
 import authRoutes from './routes/auth';
 import accountRoutes from './routes/account';
@@ -41,12 +42,12 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/account', accountRoutes);
-app.use('/api/trades', tradesRoutes);
-app.use('/api/quotes', quotesRoutes);
-app.use('/api/portfolio', portfolioRoutes);
+// Routes — auth gets a strict limiter; other routes use the general limiter
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/account', apiLimiter, accountRoutes);
+app.use('/api/trades', apiLimiter, tradesRoutes);
+app.use('/api/quotes', apiLimiter, quotesRoutes);
+app.use('/api/portfolio', apiLimiter, portfolioRoutes);
 
 // 404 handler
 app.use((_req, res) => {

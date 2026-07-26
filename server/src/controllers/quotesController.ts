@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import db from '../database';
 import { StockQuote } from '../models/types';
 
-// Simulate minor price drift so quotes don't feel static
+// Simulate minor price drift so quotes don't feel static (up to ±0.2% per call)
 function simulatePriceDrift(price: number): number {
-  const drift = (Math.random() - 0.5) * 0.004; // ±0.2% drift
+  const drift = (Math.random() - 0.5) * 0.004; // random in [-0.002, +0.002] → ±0.2%
   return Math.round(price * (1 + drift) * 100) / 100;
 }
 
