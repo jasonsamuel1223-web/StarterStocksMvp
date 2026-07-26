@@ -12,7 +12,7 @@ import portfolioRoutes from './routes/portfolio';
 /**
  * CSRF mitigation strategy:
  *  - All data-mutation endpoints (buy, sell, account) require a short-lived
- *    ****** token in the Authorization header. Cross-origin requests
+ *    access token in the Authorization header. Cross-origin requests
  *    cannot set custom headers, so these routes are inherently CSRF-safe.
  *  - The refresh token is stored in an HttpOnly cookie with SameSite=Strict,
  *    which prevents cross-origin requests from including it automatically.
